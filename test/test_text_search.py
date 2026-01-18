@@ -55,7 +55,7 @@ for i, r in enumerate(results, start=1):
     print(f"Result {i}")
     print(f"Score   : {r['score']:.4f}")
     print(f"PMC ID  : {payload.get('pmc_id')}")
-    print(f"ChunkID : payload.get('chunk_id')")
+    print(f"ChunkID : {payload.get('chunk_id')}")
     print(f"Text    : {payload.get('text', '')[:300]}...")
     print("-" * 50)
 

@@ -1,14 +1,8 @@
-from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue
 
-client = QdrantClient(
-    url="https://<your-cluster>.cloud.qdrant.io",
-    api_key="YOUR_API_KEY"
-)
 
-def get_user_memory(user_id, query_embedding, limit=5):
-
-    results = client.search(
+def get_user_memory(client, user_id, query_embedding, limit=5):
+    return client.search(
         collection_name="user_memory_collection",
         query_vector=query_embedding,
         query_filter=Filter(
@@ -19,7 +13,19 @@ def get_user_memory(user_id, query_embedding, limit=5):
                 )
             ]
         ),
-        limit=limit
+        limit=limit   # ✅ keyword
     )
 
-    return results
+
+def get_session_memory(client, user_id, session_id, query_embedding, limit=5):
+    return client.search(
+        collection_name="session_memory_collection",
+        query_vector=query_embedding,
+        query_filter=Filter(
+            must=[
+                FieldCondition(key="user_id", match=MatchValue(value=user_id)),
+                FieldCondition(key="session_id", match=MatchValue(value=session_id))
+            ]
+        ),
+        limit=limit   
+    )

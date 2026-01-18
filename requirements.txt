@@ -13,3 +13,6 @@ medmnist
 torchvision
 pillow
 numpy>=1.23.0
+
+fastapi>=0.85.0
+uvicorn>=0.18.0
