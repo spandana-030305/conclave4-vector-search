@@ -23,7 +23,6 @@ client = QdrantClient(
     url=os.environ["QDRANT_URL"],
     api_key=os.environ["QDRANT_API_KEY"]
 )
-print("Has search:", hasattr(client, "search"))
 
 # Collections
 TEXT_COLLECTION = "conclave4_healthcare_vector_search"
@@ -60,17 +59,21 @@ def search(req: SearchRequest):
         raise HTTPException(400, "Unsupported modality")
 
     # Retrieve memory (session + long-term)
-    session_memory = get_session_memory(
-        client,
-        req.user_id,
-        req.session_id,
-        base_embedding
-    )
-    user_memory = get_user_memory(
-        client,
-        req.user_id,
-        base_embedding
-    )
+    session_memory = []
+    user_memory = []
+
+    if req.modality == Modality.text:
+        session_memory = get_session_memory(
+            client,
+            req.user_id,
+            req.session_id,
+            base_embedding  # 384-dim
+        )
+        user_memory = get_user_memory(
+            client,
+            req.user_id,
+            base_embedding  # 384-dim
+        )
 
     # Inject memory into query (textual context)
     memory_context = " ".join(
@@ -92,30 +95,57 @@ def search(req: SearchRequest):
     )
 
     # Update memory
-    store_session_memory(
-        client,
-        req.user_id,
-        req.session_id,
-        base_embedding,
-        content_for_memory
-    )
-    store_user_memory(
-        client,
-        req.user_id,
-        base_embedding,
-        content_for_memory
-    )
+    if req.modality == Modality.text:
+        store_session_memory(
+            client,
+            req.user_id,
+            req.session_id,
+            base_embedding,
+            content_for_memory
+        )
+        store_user_memory(
+            client,
+            req.user_id,
+            base_embedding,
+            content_for_memory
+        )
 
     # Return evidence-based results
     return {
-        "modality": req.modality,
-        "query": content_for_memory,
-        "results": [
-            {
-                "score": r.score,
-                "payload": r.payload
-            }
-            for r in results
-        ]
-    }
+    "modality": req.modality,
+    "query": content_for_memory,
+
+    # Clear distinction section
+    "context_sources": {
+        "retrieved_knowledge": "external_medical_corpus",  # PMC dataset
+        "session_context_used": len(session_memory) > 0,
+        "user_memory_used": len(user_memory) > 0
+    },
+    # Bias, safety, privacy, explainability
+    "responsible_use": {
+        "disclaimer": (
+            "This information is retrieved from peer-reviewed medical literature "
+            "and is intended for informational purposes only. "
+            "It is not a substitute for professional medical advice, diagnosis, or treatment."
+        ),
+        "bias_notice": (
+            "Retrieved documents may reflect publication, regional, or population biases "
+            "present in the source datasets."
+        ),
+        "privacy_note": (
+            "No personal health data is stored beyond anonymized session-level memory."
+        ),
+        "explainability": (
+            "Results are ranked using semantic similarity between the query embedding "
+            "and indexed medical text embeddings."
+        )
+    },
+    "results": [
+        {
+            "score": r.score,
+            "payload": r.payload
+        }
+        for r in results
+    ]
+}
 

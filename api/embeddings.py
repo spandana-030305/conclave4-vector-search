@@ -9,8 +9,14 @@ def embed_text(text: str) -> list:
 # ---- Stub encoders (architecture-complete, implementation-light) ----
 
 def embed_image(image_url: str) -> list:
-    # Placeholder: replace with CLIP / ViT later
-    return text_model.encode(f"image:{image_url}").tolist()
+    """
+    Temporary image embedding placeholder.
+    Returns a 512-dim vector to match image collection schema.
+    """
+    import numpy as np
+
+    np.random.seed(abs(hash(image_url)) % (2**32))  # deterministic per image
+    return np.random.rand(512).tolist()
 
 def embed_audio(audio_url: str) -> list:
     # Placeholder: replace with Whisper / wav2vec later
