@@ -9,7 +9,7 @@ client = QdrantClient(
     api_key=QDRANT_API_KEY
 )
 
-client.collection_exists(
+client.create_collection(
     collection_name="conclave4_healthcare_image_search",
     vectors_config=VectorParams(
         size=512,

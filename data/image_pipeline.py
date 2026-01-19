@@ -3,13 +3,14 @@ import uuid
 import gc
 from PIL import Image
 import torch
+import numpy as np
 from transformers import CLIPProcessor, CLIPModel
 from qdrant_client import QdrantClient
 
 # =========================
 # CONFIG
 # =========================
-IMAGE_DIR = r"D:\conclave4-vector-search\data\data\images"
+IMAGE_DIR = r"D:\conclave4-vector-search\data\images_001\images"
 
 EMBED_BATCH_SIZE = 8      # CPU-safe for CLIP
 QDRANT_BATCH_SIZE = 25    # Free-tier safe
@@ -95,6 +96,10 @@ for i in range(0, total_images, EMBED_BATCH_SIZE):
         image_embeddings = clip_model.get_image_features(**inputs)
 
     image_embeddings = image_embeddings.cpu().numpy()
+    # L2 NORMALIZATION (REQUIRED FOR COSINE SIMILARITY)
+    image_embeddings = image_embeddings / np.linalg.norm(
+        image_embeddings, axis=1, keepdims=True
+    )
 
     # =========================
     # UPSERT TO QDRANT
