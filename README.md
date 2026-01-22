@@ -69,16 +69,23 @@ Make sure you have the following installed:
 - A Qdrant Cloud account
 
 2. Clone the Repository
+
 git clone https://github.com/<your-username>/<your-repo-name>.git
+
 cd <your-repo-name>
 
 3. Create a Virtual Environment (Recommended)
+
 python -m venv venv
+
 Activate it:
+
 venv\Scripts\activate (Windows)
+
 source venv/bin/activate (Linux / macOS)
 
 4. Install Dependencies
+
 pip install -r requirements.txt
 
 5. Set Up Qdrant Cloud
@@ -91,22 +98,35 @@ pip install -r requirements.txt
 - Copy the Qdrant Cloud URL and API Key
 
 6. Configure Environment Variables
+
 Set the following environment variables:
+  
   Windows (PowerShell)
+  
   setx QDRANT_URL "https://<your-qdrant-cluster-url>"
+  
   setx QDRANT_API_KEY "<your-api-key>"
+  
   Linux / macOS
+  
   export QDRANT_URL="https://<your-qdrant-cluster-url>"
+  
   export QDRANT_API_KEY="<your-api-key>"
 
 7. Run the FastAPI Server
+
 uvicorn main:app --reload
+
 Once started, the API will be available at:
+  
   http://127.0.0.1:8000
 
 8. Access Swagger UI
+
 Open your browser and navigate to:
+  
   http://127.0.0.1:8000/docs
+
 Use Swagger UI to:
 - Test text search
 - Test image search
