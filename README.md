@@ -70,9 +70,9 @@ Make sure you have the following installed:
 
 2. Clone the Repository
 
-git clone https://github.com/<your-username>/<your-repo-name>.git
+git clone https://github.com/your-username/your-repo-name.git
 
-cd <your-repo-name>
+cd your-repo-name
 
 3. Create a Virtual Environment (Recommended)
 
@@ -103,15 +103,15 @@ Set the following environment variables:
   
   Windows (PowerShell)
   
-  setx QDRANT_URL "https://<your-qdrant-cluster-url>"
+  setx QDRANT_URL "https://your-qdrant-cluster-url"
   
-  setx QDRANT_API_KEY "<your-api-key>"
+  setx QDRANT_API_KEY "your-api-key"
   
   Linux / macOS
   
-  export QDRANT_URL="https://<your-qdrant-cluster-url>"
+  export QDRANT_URL="https://your-qdrant-cluster-url"
   
-  export QDRANT_API_KEY="<your-api-key>"
+  export QDRANT_API_KEY="your-api-key"
 
 7. Run the FastAPI Server
 
