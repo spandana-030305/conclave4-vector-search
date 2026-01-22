@@ -14,6 +14,7 @@ from api.embeddings import (
     embed_text, embed_image, embed_audio, embed_video
 )
 from qdrant_client.models import SearchParams
+from api.schemas import SearchTarget
 import os
 
 app = FastAPI(title="Healthcare Vector Search API")
@@ -36,44 +37,58 @@ USER_MEMORY_COLLECTION = "user_memory_collection"
 def search(req: SearchRequest):
 
     # Generate base query embedding (per modality)
+    # Generate base query embedding (per modality + target)
     if isinstance(req, TextSearchRequest):
-        base_embedding = embed_text(req.query)
         content_for_memory = req.query
-        search_collection = TEXT_COLLECTION
+
+        if req.search_target == SearchTarget.image:
+            # Text → Image (CLIP text)
+            from api.embeddings import embed_image_text
+            base_embedding = embed_image_text(req.query)
+        else:
+            # Text → Text
+            base_embedding = embed_text(req.query)
 
     elif isinstance(req, ImageSearchRequest):
         base_embedding = embed_image(req.image_url)
         content_for_memory = req.image_url
-        search_collection = IMAGE_COLLECTION
 
     elif isinstance(req, AudioSearchRequest):
         base_embedding = embed_audio(req.audio_url)
         content_for_memory = req.audio_url
-        search_collection = TEXT_COLLECTION
 
     elif isinstance(req, VideoSearchRequest):
         base_embedding = embed_video(req.video_url)
         content_for_memory = req.video_url
-        search_collection = TEXT_COLLECTION
+
     else:
         raise HTTPException(400, "Unsupported modality")
+
+    # Decide target collection (retrieval intent)
+    if req.search_target == SearchTarget.text:
+        search_collection = TEXT_COLLECTION
+    elif req.search_target == SearchTarget.image:
+        search_collection = IMAGE_COLLECTION
+    else:
+        raise HTTPException(400, "Unsupported search target")
 
     # Retrieve memory (session + long-term)
     session_memory = []
     user_memory = []
 
-    if req.modality == Modality.text:
+    if req.modality == Modality.text and req.search_target == SearchTarget.text:
         session_memory = get_session_memory(
             client,
             req.user_id,
             req.session_id,
-            base_embedding  # 384-dim
+            base_embedding
         )
         user_memory = get_user_memory(
             client,
             req.user_id,
-            base_embedding  # 384-dim
+            base_embedding
         )
+
 
     # Inject memory into query (textual context)
     memory_context = " ".join(
@@ -94,8 +109,8 @@ def search(req: SearchRequest):
         limit=req.top_k
     )
 
-    # Update memory
-    if req.modality == Modality.text:
+    # Update memory (Text → Text only)
+    if req.modality == Modality.text and req.search_target == SearchTarget.text:
         store_session_memory(
             client,
             req.user_id,

@@ -17,7 +17,7 @@ CHUNK_SIZE = 400
 CHUNK_OVERLAP = 50
 
 QDRANT_URL = "https://51758a36-06ea-44e8-89a5-d6f5a627a3fd.us-east-1-1.aws.cloud.qdrant.io"
-QDRANT_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.TvQEfRSlRhuHzkugU0l0KI_tfjeqmWmqC5p-3NrA-C8"
+QDRANT_API_KEY = "YOUR_API_KEY"
 COLLECTION_NAME = "conclave4_healthcare_vector_search"
 
 # =========================

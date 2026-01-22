@@ -43,6 +43,29 @@ def embed_image(image_path: str) -> list:
 
     return emb.tolist()
 
+def embed_image_text(text: str) -> list:
+    """
+    CLIP TEXT embedding
+    Used for Text → Image retrieval
+    MUST match embed_image() vector space
+    """
+
+    inputs = clip_processor(
+        text=[text],
+        return_tensors="pt",
+        padding=True
+    )
+
+    with torch.no_grad():
+        emb = clip_model.get_text_features(**inputs)
+
+    emb = emb.cpu().numpy()[0]
+
+    # MUST MATCH IMAGE INGESTION NORMALIZATION
+    emb = emb / np.linalg.norm(emb)
+
+    return emb.tolist()
+
 def embed_audio(audio_url: str) -> list:
     # Placeholder: replace with Whisper / wav2vec later
     return text_model.encode(f"audio:{audio_url}").tolist()

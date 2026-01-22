@@ -12,6 +12,11 @@ class Modality(str, Enum):
     audio = "audio"
     video = "video"
 
+class SearchTarget(str, Enum):
+    text = "text"
+    image = "image"
+    audio = "audio"
+    video = "video"
 
 # -----------------------------
 # Base Request (shared fields)
@@ -21,7 +26,7 @@ class BaseSearchRequest(BaseModel):
     session_id: str
     filters: Optional[Dict] = None
     top_k: int = 5
-
+    search_target: SearchTarget = SearchTarget.text
 
 # -----------------------------
 # Modality-specific Requests

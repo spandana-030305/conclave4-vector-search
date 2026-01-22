@@ -1,0 +1,62 @@
+{
+  "modality": "image",
+  "query": "D:/conclave4-vector-search/data/images_001/images/00000001_000.png",
+  "context_sources": {
+    "retrieved_knowledge": "external_medical_corpus",
+    "session_context_used": false,
+    "user_memory_used": false
+  },
+  "responsible_use": {
+    "disclaimer": "This information is retrieved from peer-reviewed medical literature and is intended for informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.",
+    "bias_notice": "Retrieved documents may reflect publication, regional, or population biases present in the source datasets.",
+    "privacy_note": "No personal health data is stored beyond anonymized session-level memory.",
+    "explainability": "Results are ranked using semantic similarity between the query embedding and indexed medical text embeddings."
+  },
+  "results": [
+    {
+      "score": 1,
+      "payload": {
+        "image_name": "00000001_000.png",
+        "dataset": "images",
+        "source": "Medical Images",
+        "type": "image"
+      }
+    },
+    {
+      "score": 0.98908967,
+      "payload": {
+        "image_name": "00000250_002.png",
+        "dataset": "images",
+        "source": "Medical Images",
+        "type": "image"
+      }
+    },
+    {
+      "score": 0.98866475,
+      "payload": {
+        "image_name": "00000957_001.png",
+        "dataset": "images",
+        "source": "Medical Images",
+        "type": "image"
+      }
+    },
+    {
+      "score": 0.98844147,
+      "payload": {
+        "image_name": "00000602_000.png",
+        "dataset": "images",
+        "source": "Medical Images",
+        "type": "image"
+      }
+    },
+    {
+      "score": 0.98836315,
+      "payload": {
+        "image_name": "00000655_006.png",
+        "dataset": "images",
+        "source": "Medical Images",
+        "type": "image"
+      }
+    }
+  ]
+}
